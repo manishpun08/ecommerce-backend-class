@@ -56,6 +56,12 @@ const productSchema = new mongoose.Schema({
   },
 });
 
+// remove sellerId field
+productSchema.methods.toJSON = function () {
+  let obj = this.toObject();
+  delete obj.sellerId;
+  return obj;
+};
 // create table
 const Product = mongoose.model("Product", productSchema);
 

@@ -40,8 +40,9 @@ router.post(
     }
     // hash password
     const hashedPassword = await generateHashPassword(newUser.password);
-    // create user
     newUser.password = hashedPassword;
+
+    // create user
     await User.create(newUser);
     // send response
     return res
@@ -101,9 +102,7 @@ router.post(
     return res
       .status(200)
       .send({ message: "success", user: user, token: token });
-  },
-  (req, res) => {}
+  }
 );
-
 
 export default router;
