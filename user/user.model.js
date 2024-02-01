@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { date } from "yup";
 
 // set rule
 const userSchema = new mongoose.Schema({
@@ -46,7 +45,12 @@ const userSchema = new mongoose.Schema({
     enum: ["buyer", "seller"],
   },
 });
-
+// to remove password field.
+userSchema.methods.toJSON = function () {
+  let obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
 // create table
 const User = mongoose.model("User", userSchema);
 

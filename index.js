@@ -1,7 +1,7 @@
 import express from "express";
 import connectDB from "./connect.db.js";
 import userRoutes from "./user/user.route.js";
-
+import productRoutes from "./product/product.route.js";
 const app = express();
 
 // to make app understand json
@@ -12,7 +12,7 @@ connectDB();
 
 // register routes
 app.use(userRoutes);
-
+app.use(productRoutes);
 // port and server
 const PORT = 8008;
 

@@ -26,3 +26,12 @@ export let registerUserValidationSchema = Yup.object({
     .oneOf(["buyer", "seller"])
     .trim(),
 });
+
+export let loginUserValidationSchema = Yup.object({
+  email: Yup.string()
+    .email("Must be valid email.")
+    .required("Email is required.")
+    .trim()
+    .lowercase(),
+  password: Yup.string().required("Password is required.").trim(),
+});
