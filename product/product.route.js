@@ -1,6 +1,6 @@
 import express from "express";
 import { isSeller, isUser } from "../middleware/authentication.middleware.js";
-import { reqBodyValidate } from "../middleware/validation.middleware.js";
+import { reqBodyValidate } from "../middleware/validation.reqBody.middleware.js";
 import Product from "./product.model.js";
 import mongoose from "mongoose";
 import { checkMongoIdFromParams } from "../middleware/mongo.id.validity.middleware.js";
@@ -89,7 +89,7 @@ router.put(
   checkMongoIdFromParams,
   // validate product
   reqBodyValidate,
-  // edit product
+  // edit product function
   async (req, res) => {
     // extract product id from req.params
     const productId = req.params.id;
@@ -124,4 +124,6 @@ router.put(
       .send({ message: "Product is updated successfully." });
   }
 );
+
+
 export default router;
