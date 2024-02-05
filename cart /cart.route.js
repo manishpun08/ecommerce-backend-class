@@ -125,4 +125,6 @@ router.get("/cart/item/list", isBuyer, async (req, res) => {
   ]);
   return res.status(200).send({ message: "success", cartItem: cartItemList });
 });
+
+// TODO:update cart quantity.
 export default router;

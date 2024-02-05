@@ -35,4 +35,5 @@ export let addProductValidationSchema = Yup.object({
     .required("Description is required.")
     .max(1000, "Description is at most of 1000.")
     .trim(),
+  image: Yup.string().required("Image is required.").trim(),
 });

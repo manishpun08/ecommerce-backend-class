@@ -1,9 +1,14 @@
 import express from "express";
-import { isSeller, isUser } from "../middleware/authentication.middleware.js";
+import {
+  isBuyer,
+  isSeller,
+  isUser,
+} from "../middleware/authentication.middleware.js";
 import { reqBodyValidate } from "../middleware/validation.reqBody.middleware.js";
 import Product from "./product.model.js";
 import mongoose from "mongoose";
 import { checkMongoIdFromParams } from "../middleware/mongo.id.validity.middleware.js";
+import { paginationValidationSchema } from "../utils/pagination.validation.js";
 
 const router = express.Router();
 
@@ -125,5 +130,105 @@ router.put(
   }
 );
 
+// get product list by buyer
+router.post(
+  "/product/list/buyer",
+  isBuyer,
+  // validating pagination data
+  async (req, res, next) => {
+    // extract pagination data from req.body
+    const paginationData = req.body;
+
+    // validate pagination data
+    try {
+      const validatedData = await paginationValidationSchema.validate(
+        paginationData
+      );
+      req.body = validatedData;
+      next();
+    } catch (error) {
+      return res.status(400).send({ message: error.message });
+    }
+  },
+  // pagination function
+  async (req, res) => {
+    // extract pagination data from req.body
+    const { page, limit } = req.body;
+
+    // calculate skip
+    const skip = (page - 1) * limit;
+
+    //run query
+    const productList = await Product.aggregate([
+      { $match: {} },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $project: {
+          name: 1,
+          brand: 1,
+          price: 1,
+          description: 1,
+          image: 1,
+        },
+      },
+    ]);
+    return res
+      .status(200)
+      .send({ message: "success", productList: productList });
+  }
+);
+
+// get product list by seller
+router.post(
+  "/product/list/seller",
+
+  isSeller,
+
+  // validating pagination data
+  async (req, res, next) => {
+    // extract pagination data from req.body
+    const paginationData = req.body;
+
+    // validate pagination data
+    try {
+      const validatedData = await paginationValidationSchema.validate(
+        paginationData
+      );
+      req.body = validatedData;
+      next();
+    } catch (error) {
+      return res.status(400).send({ message: error.message });
+    }
+  },
+
+  // pagination function
+  async (req, res) => {
+    // extract pagination data from req.body
+    const { page, limit } = req.body;
+
+    // calculate skip
+    const skip = (page - 1) * limit;
+
+    // run query
+    const productList = await Product.aggregate([
+      { $match: { sellerId: req.loggedInUserId } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $project: {
+          name: 1,
+          brand: 1,
+          price: 1,
+          description: 1,
+          image: 1,
+        },
+      },
+    ]);
+    return res
+      .status(200)
+      .send({ message: "success", productList: productList });
+  }
+);
 
 export default router;
